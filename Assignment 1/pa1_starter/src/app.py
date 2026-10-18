@@ -66,7 +66,7 @@ def delete_post(post_id):
      return json.dumps(post), 200
 
 #Get comments for a specific post
-@app.route("/posts/<int:post_id>/")
+@app.route("/posts/<int:post_id>/comments/")
 def get_comments(post_id):
      post = posts.get(post_id)
      if not post:
@@ -74,7 +74,7 @@ def get_comments(post_id):
      return json.dumps(comments_on_post[post_id]), 200
 
 #Post a comment for a specific post
-@app.rout("/posts/<int:post_id>/", methods=["POST"])
+@app.route("/posts/<int:post_id>/comments/", methods=["POST"])
 def post_comment(post_id):
      global post_comment_id_counter
 
@@ -95,7 +95,7 @@ def post_comment(post_id):
 
      return json.dumps(comment), 201
 
-
+#
 
 
 if __name__ == "__main__":
