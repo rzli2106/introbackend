@@ -33,19 +33,19 @@ def create_post():
      global post_id_counter
 
      body = json.loads(request.data)
+     if "title" not in body or "link" not in body or "username" not in body:
+          return json.dumps({"error": "Missing title, link or username"}), 404
+
      title = body["title"]
      link = body["link"]
      username = body["username"]
 
-     if title not in body or link not in body or username not in body:
-          return json.dumps({"error": "Missing title, link or username"}), 404
-
      post = {"id": post_id_counter, "upvotes": 1, "title": title, "link": link,  "username": username}
 
-     posts[posts_id_counter] = post
-     comments_on_post[posts_id_counter] = []
-     posts_id_counter += 1
-     return json.dumps(posts), 201
+     posts[post_id_counter] = post
+     comments_on_post[post_id_counter] = []
+     post_id_counter += 1
+     return json.dumps(post), 201
 
 # get a specific post
 @app.route("/api/posts/<int:post_id>")
@@ -71,7 +71,7 @@ def get_comments(post_id):
      post = posts.get(post_id)
      if not post:
           return json.dumps({"error": "Post does not exist"}), 404
-     return json.dumps(comments_on_post[post_id]), 200
+     return json.dumps({"Comments":comments_on_post[post_id]}), 200
 
 #Post a comment for a specific post
 @app.route("/api/posts/<int:post_id>/comments/", methods=["POST"])
@@ -81,12 +81,14 @@ def post_comment(post_id):
      post = posts.get(post_id)
      if not post:
           return json.dumps({"error": "Post does not exist"}), 404
+     
      body = json.loads(request.data)
+     if "text" not in body or "username" not in body:
+          return json.dumps({"error": "Missing text or username"}), 400
+
+     
      text = body["text"]
      username = body["username"]
-
-     if text not in body or username not in body:
-          return json.dumps({"error": "Missing body or username"}), 404
 
      comment = {"id": post_comment_id_counter, "upvotes": 1, "text": text, "username": username}
 
@@ -96,15 +98,16 @@ def post_comment(post_id):
      return json.dumps(comment), 201
 
 #Edit a comment for a specific post
-@app.route("/api/posts/<int:post_id>/comments/<int:comment_id>", methods = ["POST"])
+@app.route("/api/posts/<int:post_id>/comments/<int:comment_id>/", methods = ["POST"])
 def edit_comment(post_id, comment_id):
      if post_id not in posts:
           return json.dumps({"error": "Post does not exist"}), 404
      
      body = json.loads(request.data)
-     text = body["text"]
-     if text not in body:
+     if "text" not in body:
           return json.dumps({"error": "Editing comment requires text"}), 404
+
+     text = body["text"]
      
      for comment in comments_on_post[post_id]:
           if comment["id"] == comment_id:
