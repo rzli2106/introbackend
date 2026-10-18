@@ -56,7 +56,7 @@ def get_post(post_id):
      return json.dumps(post), 200
 
 
-# delete a specific
+# delete a specific post
 @app.route("/api/posts/<int:post_id>/", methods = ["DELETE"])
 def delete_post(post_id):
      post = posts.get(post_id, None)
