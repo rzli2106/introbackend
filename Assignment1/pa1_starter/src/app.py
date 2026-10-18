@@ -22,13 +22,13 @@ def reddit():
 # your routes here
 
 # get all post
-@app.route("/posts/")
+@app.route("api/posts/")
 def get_posts():
         res = {"posts": list(posts.values())}
         return json.dumps(res), 200
 
 # create a post
-@app.route("/posts/", methods=["POST"])
+@app.route("api/posts/", methods=["POST"])
 def create_post():
      global post_id_counter
 
@@ -48,7 +48,7 @@ def create_post():
      return json.dumps(posts), 201
 
 # get a specific post
-@app.route("/posts/<int:post_id>")
+@app.route("api/posts/<int:post_id>")
 def get_post(post_id):
      post = posts.get(post_id)
      if not post:
@@ -57,7 +57,7 @@ def get_post(post_id):
 
 
 # delete a specific
-@app.route("/posts/<int:post_id>/", methods = ["DELETE"])
+@app.route("api/posts/<int:post_id>/", methods = ["DELETE"])
 def delete_post(post_id):
      post = posts.get(post_id, None)
      if not post:
@@ -66,7 +66,7 @@ def delete_post(post_id):
      return json.dumps(post), 200
 
 #Get comments for a specific post
-@app.route("/posts/<int:post_id>/comments/")
+@app.route("api/posts/<int:post_id>/comments/")
 def get_comments(post_id):
      post = posts.get(post_id)
      if not post:
@@ -74,7 +74,7 @@ def get_comments(post_id):
      return json.dumps(comments_on_post[post_id]), 200
 
 #Post a comment for a specific post
-@app.route("/posts/<int:post_id>/comments/", methods=["POST"])
+@app.route("api/posts/<int:post_id>/comments/", methods=["POST"])
 def post_comment(post_id):
      global post_comment_id_counter
 
@@ -96,7 +96,7 @@ def post_comment(post_id):
      return json.dumps(comment), 201
 
 #Edit a comment for a specific post
-@app.route("/posts/<int:post_id>/comments/<int:comment_id>")
+@app.route("api/posts/<int:post_id>/comments/<int:comment_id>", methods = ["POST"])
 def edit_comment(post_id, comment_id):
      if post_id not in posts:
           return json.dumps({"error": "Post does not exist"}), 404
