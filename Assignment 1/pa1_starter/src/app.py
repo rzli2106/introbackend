@@ -88,8 +88,12 @@ def post_comment(post_id):
      if text not in body or username not in body:
           return json.dumps({"error": "Missing body or username"}), 404
 
-     comment = {id: post_comment_id_counter, upvotes: 1,}
+     comment = {"id": post_comment_id_counter, "upvotes": 1, "text": text, "username": username}
 
+     comments_on_post[post.id].append(comment)
+     post_comment_id_counter += 1
+
+     return json.dumps(comment), 201
 
 
 
