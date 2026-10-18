@@ -95,7 +95,22 @@ def post_comment(post_id):
 
      return json.dumps(comment), 201
 
-#
+#Edit a comment for a specific post
+@app.route("/posts/<int:post_id>/comments/<int:comment_id>")
+def edit_comment(post_id, comment_id):
+     if post_id not in posts:
+          return json.dumps({"error": "Post does not exist"}), 404
+     
+     body = json.loads(request.data)
+     text = body["text"]
+     if text not in body:
+          return json.dumps({"error": "Editing comment requires text"}), 404
+     
+     for comment in comments_on_post[post_id]:
+          if comment["id"] == comment_id:
+               comment["text"] = body["text"]
+               return json.dumps(comment), 200
+
 
 
 if __name__ == "__main__":
