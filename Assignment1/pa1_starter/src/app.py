@@ -48,7 +48,7 @@ def create_post():
      return json.dumps(post), 201
 
 # get a specific post
-@app.route("/api/posts/<int:post_id>")
+@app.route("/api/posts/<int:post_id>/")
 def get_post(post_id):
      post = posts.get(post_id)
      if not post:
@@ -71,7 +71,7 @@ def get_comments(post_id):
      post = posts.get(post_id)
      if not post:
           return json.dumps({"error": "Post does not exist"}), 404
-     return json.dumps({"Comments":comments_on_post[post_id]}), 200
+     return json.dumps({"comments":comments_on_post[post_id]}), 200
 
 #Post a comment for a specific post
 @app.route("/api/posts/<int:post_id>/comments/", methods=["POST"])
