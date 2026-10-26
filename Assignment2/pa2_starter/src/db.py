@@ -24,7 +24,7 @@ class DatabaseDriver(object):
         Secures a connection with the database and stores it into the instance variable 'conn'
         """
         self.conn = sqlite3.connect(
-            "todo.db", check_same_thread=False
+            "venmo.db", check_same_thread=False
         )
         self.create_users_table()
 
@@ -33,7 +33,7 @@ class DatabaseDriver(object):
         Using SQL, creates a users table
         """
         self.conn.execute("""
-        CREATE TABLE IF NOT EXISTS task(
+        CREATE TABLE IF NOT EXISTS users(
                                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                                         name TEXT NOT NULL,
                                         username TEXT NOT NULL,
@@ -76,7 +76,7 @@ class DatabaseDriver(object):
         """
         Using SQL, returns the user with the given id
         """
-        cursor = self.conn.execute("SELECT * FROM users WHERE id = ?;", (user_id))
+        cursor = self.conn.execute("SELECT * FROM users WHERE id = ?;", (user_id,))
         for row in cursor:
             return {"id": row[0], "name": row[1], "username": row[2], "balance": row[3]}
         return None
@@ -85,7 +85,7 @@ class DatabaseDriver(object):
         """
         Using SQL, deletes the user with the given id
         """
-        self.conn.execute("DELETE FROM users WHERE id = ?;", (user_id))
+        self.conn.execute("DELETE FROM users WHERE id = ?;", (user_id,))
         self.conn.commit()
 
     def update_balance_by_id(self, user_id, balance):
