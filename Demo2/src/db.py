@@ -106,6 +106,89 @@ class DatabaseDriver(object):
         self.conn.execute("DELETE FROM task WHERE id = ?", {id, })
         self.conn.commit()
 
+    def create_subtask_table(self):
+        """
+        Using SQL, creates a subtask table
+        """
+        self.conn.execute(
+            """
+                CREATE TABLE IF NOT EXIST subtask(
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                description TEXT NOT NULL,
+                done BOOLEAN NOT NULL,
+                task_id INTEGER NOT NULL,
+                FOREIGN KEY (task_id) REFERENCES task(id)
+                
+                
+                );
+            """
+        )
+
+    def insert_subtask(self, description, done, task_id):
+        """
+        Using SQL adds a new subtask into the subtask table
+        """
+
+        cursor = self.conn.execute(
+            """
+            INSERT INTO subtask (description, done, task_id) VALUES (?,?,?);
+            """, (description, done, task_id)
+        )
+        self.conn.commit()
+        return cursor.lastrowid
+
+    def get_subtask_by_id(self, id):
+        """
+        Using SQL to get a subtask by ID
+        """
+        cursor = self.conn.execute(
+            """
+            SELECT * FROM subtask WHERE id=?
+            """, (id,)
+        )
+        for row in cursor:
+            return {
+            "id": id,
+            "description": row[1],
+            "done": row[2],
+            "task_id": row[3]
+            }
+        return None
+
+    def get_subtasks_by_id(self, task_id):
+        """
+        Using SQL, get all subtasks for a given task id
+        """
+        cursor = self.conn.execute(
+            "SELECT * FROM subtask WHERE task_id=?", (task_id,)
+        )
+        subtasks = []
+        for row in cursor:
+            subtasks.append((
+                "id": row[0],
+                "description": row[1],
+                "done": row[2],
+                "task_id": row[3]
+
+            ))
+        return subtasks
+
+    def get_all_tasks(self):
+        """
+        Using SQL, return all tasks in table
+        """
+
+        cursor = self.conn.execute("SELECT * FROM task;")
+        tasks = []
+        for row in cursor:
+            tasks.append((
+                "id": row[0],
+                "description": row[1],
+                "done": row[2],
+                "subtask": self.get_subtasks_by_id(row[0])
+            ))
+
+        return tasks
 
 
 # Only <=1 instance of the database driver
