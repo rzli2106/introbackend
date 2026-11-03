@@ -74,7 +74,6 @@ def create_transaction():
         return failure_response("sender_id, receiver_id, amount, and message are required", 400)
     if accepted is not None and accepted is not True:
         return failure_response("accepted must be true or null", 400)
-
     transaction_id, error, code = DB.insert_transaction_table(
         sender_id, receiver_id, amount, message, accepted
     )
